@@ -16,10 +16,19 @@ export default class NewBill {
     new Logout({ document, localStorage, onNavigate })
   }
   handleChangeFile = e => {
+
     e.preventDefault()
+    const fileInput = this.document.querySelector(`input[data-testid="file"]`)
     const file = this.document.querySelector(`input[data-testid="file"]`).files[0]
     const filePath = e.target.value.split(/\\/g)
     const fileName = filePath[filePath.length-1]
+    console.log(fileInput)
+    console.log(file)
+    console.log(fileName)
+    if (!fileName.match(/(\.jpg|\.jpeg|\.png)$/)) {
+      alert('Extension non valide')
+      fileInput.value = ""
+    }
     const formData = new FormData()
     const email = JSON.parse(localStorage.getItem("user")).email
     formData.append('file', file)
