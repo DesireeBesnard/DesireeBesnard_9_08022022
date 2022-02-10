@@ -33,6 +33,8 @@ export default class {
       .bills()
       .list()
       .then(snapshot => {
+        console.log(snapshot)
+        const antiChrono = (a, b) => ((a.date < b.date) ? 1 : -1)
         const bills = snapshot
           .map(doc => {
             try {
@@ -51,8 +53,9 @@ export default class {
                 status: formatStatus(doc.status)
               }
             }
-          })
+          }).sort(antiChrono)
           console.log('length', bills.length)
+          console.log(bills)
         return bills
       })
     }
