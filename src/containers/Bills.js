@@ -52,12 +52,9 @@ export default class {
               }
             }
           })
-          console.log('length', bills.length)
+          // console.log('length', bills.length)
         return bills
       })
     }
   }
 }
-
-//         const antiChrono = (a, b) => ((a.date < b.date) ? 1 : -1)
-//  .sort(antiChrono)
