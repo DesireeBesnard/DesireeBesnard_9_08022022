@@ -7,11 +7,29 @@ import BillsUI from "../views/BillsUI.js"
 import { bills } from "../fixtures/bills.js"
 import { ROUTES_PATH} from "../constants/routes.js";
 import {localStorageMock} from "../__mocks__/localStorage.js";
+import mockStore from "../__mocks__/store"
 
 import router from "../app/Router.js";
 
+jest.mock("../app/store", () => mockStore)
+
+
 describe("Given I am connected as an employee", () => {
   describe("When I am on Bills Page", () => {
+    test("fetches bills from mock API GET", async () => {
+      localStorage.setItem("user", JSON.stringify({ type: "Employee", email: "e@e" }));
+      const root = document.createElement("div")
+      root.setAttribute("id", "root")
+      document.body.append(root)
+      router()
+      window.onNavigate(ROUTES_PATH.Bills)
+      await waitFor(() => screen.getByText("Mes notes de frais"))
+      const contentPending  = await screen.getByText("encore")
+      expect(contentPending).toBeTruthy()
+      const contentRefused  = await screen.getByText("test1")
+      expect(contentRefused).toBeTruthy()
+    })
+
     test("Then bill icon in vertical layout should be highlighted", async () => {
 
       Object.defineProperty(window, 'localStorage', { value: localStorageMock })
@@ -27,7 +45,6 @@ describe("Given I am connected as an employee", () => {
       const windowIcon = screen.getByTestId('icon-window')
       //to-do write expect expression
       expect(windowIcon.classList.contains("active-icon")).toBeTruthy()
-
     })
     test("Then bills should be ordered from earliest to latest", () => {
       document.body.innerHTML = BillsUI({ data: bills })
@@ -35,7 +52,6 @@ describe("Given I am connected as an employee", () => {
       const antiChrono = (a, b) => ((a < b) ? 1 : -1)
       const datesSorted = [...dates].sort(antiChrono)
       expect(dates).toEqual(datesSorted)
-
     })
   })
 })
