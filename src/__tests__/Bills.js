@@ -81,5 +81,30 @@ describe("Given I am connected as an employee", () => {
         expect(modale).toBeTruthy()
       })
     })
+
+    describe("When I click one the new Bill button", () => {
+      test("Then the newBill form should be displayed", () => {
+        Object.defineProperty(window, 'localStorage', { value: localStorageMock })
+        window.localStorage.setItem('user', JSON.stringify({
+          type: 'Employee'
+        }))
+
+        document.body.innerHTML = BillsUI({ data: bills })
+        const onNavigate = (pathname) => {
+          document.body.innerHTML = ROUTES({ pathname })
+        }
+        const store = null
+        const bill = new Bills({ document, onNavigate, store, localStorage: window.localStorage })
+        
+        const handleClickNewBill = jest.fn(bill.handleClickNewBill)
+        const newBillButton = screen.getByTestId('btn-new-bill')
+        userEvent.click(newBillButton)
+        expect(handleClickNewBill).toHaveBeenCalled()
+
+        const newBillForm = screen.getByTestId('form-new-bill')
+        expect(newBillForm).toBeTruthy()
+      })
+    })
+
   })
 })
