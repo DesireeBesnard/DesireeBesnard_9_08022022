@@ -18,7 +18,7 @@ jest.mock("../app/store", () => mockStore)
 describe("Given I am connected as an employee", () => {
   describe("When I am on Bills Page and click  on newBill button", () => {
 
-    test("Then the newBill form should appear", async () => {
+    beforeEach(async () => {
       localStorage.setItem("user", JSON.stringify({ type: "Employee", email: "e@e" }));
       const root = document.createElement("div")
       root.setAttribute("id", "root")
@@ -26,6 +26,9 @@ describe("Given I am connected as an employee", () => {
       router()
       window.onNavigate(ROUTES_PATH.Bills)
       await waitFor(() => screen.getByText("Mes notes de frais"))
+    })
+
+    test("Then the newBill form should appear", async () => {
 
       userEvent.click(getByTestId(document.body,'btn-new-bill'))
       expect(
@@ -34,40 +37,47 @@ describe("Given I am connected as an employee", () => {
 
     })
   })
+
+  describe("When I am on newBill page and submit a new bill", () => {
+    test("A new Bill should be created", async () => {
+      
+      userEvent.selectOptions(screen.getByTestId('expense-type'), 'Hôtel et logement')
+
+      userEvent.type(
+        getByTestId(document.body, 'expense-name'), 'Update Bill'
+      )
+
+      userEvent.type(
+        getByTestId(document.body, 'datepicker'), '04/04/2004'
+      )
+
+      userEvent.type(
+        getByTestId(document.body, 'amount'), '400'
+      )
+
+      userEvent.type(
+        getByTestId(document.body, 'vat'), '80'
+      )
+
+      userEvent.type(
+        getByTestId(document.body, 'pct'), '20'
+      )
+
+      const file = new File(["facturefreemobile"], "facturefreemobile.jpg", {type: 'image/jpg'})
+      userEvent.upload(
+        getByTestId(document.body, 'file'), file
+      )
+
+      const submitBtn = getByText(document.body, 'Envoyer')
+      userEvent.click(submitBtn)
+      await waitFor(() => screen.getByText("Mes notes de frais"))
+
+      expect(screen.getByText('Update Bill')).toBeTruthy()
+    })
+  })
 })
 
       // const html = NewBillUI()
       // document.body.innerHTML = html
 
       //to-do write assertion
-      // userEvent.selectOptions(screen.getByTestId('expense-type'), 'Services en ligne')
-
-      // userEvent.type(
-      //   getByTestId(document.body, 'expense-name'), 'Facture Free Mobile'
-      // )
-
-      // userEvent.type(
-      //   getByTestId(document.body, 'datepicker'), '28/02/2022'
-      // )
-
-      // userEvent.type(
-      //   getByTestId(document.body, 'amount'), '16'
-      // )
-
-      // userEvent.type(
-      //   getByTestId(document.body, 'vat'), '3'
-      // )
-
-      // userEvent.type(
-      //   getByTestId(document.body, 'pct'), '20'
-      // )
-
-      // const file = new File(["facturefreemobile"], "facturefreemobile.jpg", {type: 'image/jpg'})
-      // userEvent.upload(
-      //   getByTestId(document.body, 'file'), file
-      // )
-
-      // const submitBtn = getByText(document.body, 'Envoyer')
-      // userEvent.click(submitBtn)
-
-      // expect(screen.getByText('Mes notes de frais')).toBeTruthy()
