@@ -21,7 +21,7 @@ export default class NewBill {
     const fileInput = this.document.querySelector(`input[data-testid="file"]`)
     const file = this.document.querySelector(`input[data-testid="file"]`).files[0]
     const filePath = e.target.value.split(/\\/g)
-    const fileName = filePath[filePath.length-1]
+    const fileName = filePath[filePath.length-1]  
     if ((fileName.length !== 0) && (!fileName.match(/(\.jpg|\.jpeg|\.png)$/))) {
       alert('Extension non valide')
       fileInput.value = ""
@@ -40,7 +40,6 @@ export default class NewBill {
         }
       })
       .then(({fileUrl, key}) => {
-        console.log(fileUrl)
         this.billId = key
         this.fileUrl = fileUrl
         this.fileName = fileName
@@ -62,8 +61,6 @@ export default class NewBill {
       fileName: this.fileName,
       status: 'pending'
     }
-    console.log("this.fileName", this.fileName)
-    console.log("ceci est bill",bill)
     this.updateBill(bill)
     this.onNavigate(ROUTES_PATH['Bills'])
   }
@@ -76,7 +73,6 @@ export default class NewBill {
       .update({data: JSON.stringify(bill), selector: this.billId})
       .then(() => {
         this.onNavigate(ROUTES_PATH['Bills'])
-        console.log(this.store.bills().list())
       })
       .catch(error => console.error(error))
     }
