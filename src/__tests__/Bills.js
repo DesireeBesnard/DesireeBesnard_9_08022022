@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import {screen, waitFor} from "@testing-library/dom"
+import {screen, waitFor, getByTestId} from "@testing-library/dom"
 import BillsUI from "../views/BillsUI.js"
 import { bills } from "../fixtures/bills.js"
 import Bills from "../containers/Bills"
@@ -11,6 +11,7 @@ import {localStorageMock} from "../__mocks__/localStorage.js";
 import mockStore from "../__mocks__/store"
 import router from "../app/Router.js";
 import userEvent from "@testing-library/user-event";
+
 
 jest.mock("../app/store", () => mockStore)
 
@@ -83,5 +84,29 @@ describe("Given I am connected as an employee", () => {
       })
     })
 
+    describe("When I click on newBill button", () => {
+      test("Then the newBill form should appear", async () => {
+        Object.defineProperty(window, 'localStorage', { value: localStorageMock })
+        window.localStorage.setItem('user', JSON.stringify({
+          type: 'Employee'
+        }))
+
+        document.body.innerHTML = BillsUI({ data: bills })
+        const onNavigate = (pathname) => {
+          document.body.innerHTML = ROUTES({ pathname })
+        }
+        const store = null
+        const billsContainer = new Bills({ document, onNavigate, store, localStorage: window.localStorage })
+
+        const handleClickNewBill = jest.fn(billsContainer.handleClickNewBill)
+        const newBillBtn = getByTestId(document.body, "btn-new-bill")
+        newBillBtn.addEventListener('click', handleClickNewBill())
+
+        userEvent.click(newBillBtn)
+        expect(handleClickNewBill).toHaveBeenCalled()
+        expect(screen.getByText('Envoyer une note de frais')).toBeTruthy()
+
+      })
+    })
   })
 })

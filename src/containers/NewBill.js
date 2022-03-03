@@ -18,14 +18,24 @@ export default class NewBill {
   handleChangeFile = e => {
 
     e.preventDefault()
+    const formNewBill = this.document.querySelector(`form[data-testid="form-new-bill"]`)
     const fileInput = this.document.querySelector(`input[data-testid="file"]`)
     const file = this.document.querySelector(`input[data-testid="file"]`).files[0]
     const filePath = e.target.value.split(/\\/g)
-    const fileName = filePath[filePath.length-1]  
-    if ((fileName.length !== 0) && (!fileName.match(/(\.jpg|\.jpeg|\.png)$/))) {
-      alert('Extension non valide')
+    const fileName = filePath[filePath.length-1] 
+    const error = document.createElement('p')
+    error.classList.add("text-center", "error")
+    error.textContent = "Seuls les formats jpg, jpeg et png sont valides"
+
+    if ((file.name.length !== 0) && (!file.name.match(/(\.jpg|\.jpeg|\.png)$/))) {
       fileInput.value = ""
-    }
+      formNewBill.appendChild(error)
+      const removeError = () => {
+        formNewBill.removeChild(this.document.querySelector(".error"))
+      }
+      setTimeout(removeError, 3000)
+      return
+    } 
     const formData = new FormData()
     const email = JSON.parse(localStorage.getItem("user")).email
     formData.append('file', file)
