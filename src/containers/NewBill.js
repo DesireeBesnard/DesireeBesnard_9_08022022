@@ -15,8 +15,11 @@ export default class NewBill {
     this.billId = null
     new Logout({ document, localStorage, onNavigate })
   }
-  handleChangeFile = e => {
 
+  /**
+   * BUG FIX, Extension problem: if the extension is not valid, an error message appears
+   */
+  handleChangeFile = e => {
     e.preventDefault()
     const formNewBill = this.document.querySelector(`form[data-testid="form-new-bill"]`)
     const fileInput = this.document.querySelector(`input[data-testid="file"]`)

@@ -38,7 +38,11 @@ export default class {
             try {
               return {
                 ...doc,
-                date: formatDate(doc.date),
+                /**
+                 * BUG FIX, Dates not in descending order: remove formatDate function to sort dates instead of strings
+                 */
+                // date: formatDate(doc.date),
+                date: doc.date,
                 status: formatStatus(doc.status)
               }
             } catch(e) {
@@ -52,7 +56,7 @@ export default class {
               }
             }
           })
-          // console.log('length', bills.length)
+          console.log('length', bills.length)
         return bills
       })
     }
