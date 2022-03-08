@@ -17,18 +17,25 @@ jest.mock("../app/store", () => mockStore)
 
 describe("Given I am connected as an employee", () => {
   describe("When I am on Bills Page", () => {
-    // test d'intégration GET
+    // GET intergration test
     test("fetches bills from mock API GET", async () => {
+
+      const spy = jest.spyOn(mockStore, "bills")
+      const bills = await mockStore.bills().list()
+
       localStorage.setItem("user", JSON.stringify({ type: "Employee", email: "e@e" }));
       const root = document.createElement("div")
       root.setAttribute("id", "root")
       document.body.append(root)
       router()
       window.onNavigate(ROUTES_PATH.Bills)
+
       await waitFor(() => screen.getByText("Mes notes de frais"))
       const contentPending  = await screen.getByText("encore")
-      expect(contentPending).toBeTruthy()
       const contentRefused  = await screen.getByText("test1")
+      expect(spy).toHaveBeenCalled()
+      expect(bills.length).toBe(4)
+      expect(contentPending).toBeTruthy()
       expect(contentRefused).toBeTruthy()
     })
 
@@ -68,7 +75,7 @@ describe("Given I am connected as an employee", () => {
         const onNavigate = (pathname) => {
           document.body.innerHTML = ROUTES({ pathname })
         }
-        const store = null
+        const store = mockStore
         const billsContainer = new Bills({ document, onNavigate, store, localStorage: window.localStorage })
 
         const handleClickIconEye = jest.fn(billsContainer.handleClickIconEye)
@@ -95,14 +102,14 @@ describe("Given I am connected as an employee", () => {
         const onNavigate = (pathname) => {
           document.body.innerHTML = ROUTES({ pathname })
         }
-        const store = null
+        const store = mockStore
         const billsContainer = new Bills({ document, onNavigate, store, localStorage: window.localStorage })
 
         const handleClickNewBill = jest.fn(billsContainer.handleClickNewBill)
         const newBillBtn = getByTestId(document.body, "btn-new-bill")
         newBillBtn.addEventListener('click', handleClickNewBill())
-
         userEvent.click(newBillBtn)
+
         expect(handleClickNewBill).toHaveBeenCalled()
         expect(screen.getByText('Envoyer une note de frais')).toBeTruthy()
 

@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import {screen, getByTestId, fireEvent} from "@testing-library/dom"
+import {screen, waitFor, getByTestId, fireEvent} from "@testing-library/dom"
 import {ROUTES, ROUTES_PATH} from "../constants/routes.js";
 import {localStorageMock} from "../__mocks__/localStorage.js";
 import mockStore from "../__mocks__/store"
@@ -14,10 +14,27 @@ import router from "../app/Router"
 jest.mock("../app/store", () => mockStore)
 
 describe("Given I am connected as an employee", () => {
-  
-  describe("When I am on NewBill Page with an empty form and click on newBill button", () => {
 
-    test("Then I should stay on the form", async () => {
+  test("Then letter icon in vertical layout should be highlighted", async () => {
+
+    Object.defineProperty(window, 'localStorage', { value: localStorageMock })
+    window.localStorage.setItem('user', JSON.stringify({
+      type: 'Employee'
+    }))
+    const root = document.createElement("div")
+    root.setAttribute("id", "root")
+    document.body.append(root)
+    router()
+    window.onNavigate(ROUTES_PATH.NewBill)
+    await waitFor(() => screen.getByTestId('icon-mail'))
+    const mailIcon = screen.getByTestId('icon-mail')
+    //to-do write expect expression
+    expect(mailIcon.classList.contains("active-icon")).toBeTruthy()
+  })
+  
+  describe("When I am on NewBill Page and try to submit an empty form", () => {
+
+    test("Then I should stay on newBill page", async () => {
 
       Object.defineProperty(window, 'localStorage', { value: localStorageMock })
       window.localStorage.setItem('user', JSON.stringify({
@@ -96,7 +113,7 @@ describe("Given I am connected as an employee", () => {
     })
   })
 
-  describe("When I am on NewBill Page, the form is incomplete and I click on send button", () => {
+  describe("When I am on NewBill Page and try to submit an incomplete form", () => {
     test("Then I should stay on newBill page", () => {
       document.body.innerHTML = NewBillUI()
       const inputData = {
@@ -137,13 +154,14 @@ describe("Given I am connected as an employee", () => {
       expect(inputFile.files[0]).toStrictEqual(file)
 
       const form = screen.getByTestId('form-new-bill')
-      const handleSubmit = jest.fn((e) => e.preventDefault())
+      const store = mockStore
+      const newBill = new NewBill({ document, onNavigate, store, localStorage })
+      newBill.handleSubmit = jest.fn()
 
-      form.addEventListener("submit", handleSubmit)
+      form.addEventListener("submit", newBill.handleSubmit)
       fireEvent.submit(form)
 
       expect(screen.getByTestId('form-new-bill')).toBeTruthy()
-
     })
   })
 
