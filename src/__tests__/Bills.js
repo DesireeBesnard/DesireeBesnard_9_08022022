@@ -39,6 +39,7 @@ describe("Given I am connected as an employee", () => {
       expect(contentRefused).toBeTruthy()
     })
 
+
     test("Then bill icon in vertical layout should be highlighted", async () => {
 
       Object.defineProperty(window, 'localStorage', { value: localStorageMock })

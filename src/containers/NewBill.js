@@ -16,9 +16,6 @@ export default class NewBill {
     new Logout({ document, localStorage, onNavigate })
   }
 
-  /**
-   * BUG FIX, Extension problem: if the extension is not valid, an error message appears
-   */
   handleChangeFile = e => {
     e.preventDefault()
     const formNewBill = this.document.querySelector(`form[data-testid="form-new-bill"]`)
@@ -30,6 +27,9 @@ export default class NewBill {
     error.classList.add("text-center", "error")
     error.textContent = "Seuls les formats jpg, jpeg et png sont valides"
 
+    /**
+    * BUG FIX, Extension problem: if the extension is not valid, an error message appears
+    */
     if ((file.name.length !== 0) && (!file.name.match(/(\.jpg|\.jpeg|\.png)$/))) {
       fileInput.value = ""
       formNewBill.appendChild(error)
