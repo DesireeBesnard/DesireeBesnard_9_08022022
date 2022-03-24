@@ -20,7 +20,7 @@ const row = (bill) => {
   }
 
 /**
-* BUG FIX, Dates not in descending order: add a sorting function
+* BUG FIX, Dates not in descending order: add a sorting function by time stamp
 */
 // const rows = (data) => {
 //   return (data && data.length) ? data.map(bill => row(bill)).join("") : ""
